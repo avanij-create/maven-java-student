@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -7,26 +8,29 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Build JAR') {
+
+        stage('Compile') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn clean compile'
             }
         }
-        stage('Run Application') {
+
+        stage('Build') {
+            steps {
+                sh 'mvn package'
+            }
+        }
+
+        stage('Deploy') {
             steps {
                 sh 'java -jar target/student-app-1.0.0.jar'
-            }
-        }
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t student-app:1.0 .'
             }
         }
     }
 
     post {
         success {
-            echo 'Maven Java project built successfully.'
+            echo 'Java application completed successfully.'
         }
         failure {
             echo 'Build failed. Check the console output.'
